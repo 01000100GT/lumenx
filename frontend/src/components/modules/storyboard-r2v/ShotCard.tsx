@@ -308,6 +308,7 @@ export default function ShotCard({
                         src={shot.videoUrl}
                         alt={t("generatedVideo") || "Generated video"}
                         className="w-full aspect-video"
+                        clickToLightbox
                     />
                 );
             }
@@ -403,6 +404,7 @@ export default function ShotCard({
                     src={shot.videoUrl}
                     alt={t("generatedVideo") || "Generated video"}
                     className="w-full aspect-video"
+                    clickToLightbox
                 />
             );
         }
@@ -567,7 +569,7 @@ export default function ShotCard({
                 {/* Main content: Preview + Editor */}
                 <div className="flex">
                     {/* Left: Preview */}
-                    <div className="w-44 shrink-0 bg-black/20 flex flex-col items-center justify-center relative border-r border-white/[0.04]">
+                    <div className="w-56 shrink-0 bg-black/20 flex flex-col items-center justify-center relative border-r border-white/[0.04]">
                         {renderPreview()}
                         {/* Pinned chip — overlays the hero when the user has
                             manually pinned an active take. Group/peer makes
