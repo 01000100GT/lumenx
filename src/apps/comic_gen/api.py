@@ -3530,6 +3530,23 @@ def _check_mulerun_cli_status() -> bool:
         return False
 
 
+@app.post("/config/mulerun-login")
+def trigger_mulerun_login():
+    """Trigger mulerun login — opens browser for OAuth."""
+    import shutil, subprocess
+    if shutil.which("mulerun") is None:
+        raise HTTPException(status_code=400, detail="MuleRun CLI 未安装。请先运行: npm i -g @mulerunai/cli")
+    try:
+        subprocess.Popen(
+            ["mulerun", "login"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        return {"status": "ok", "message": "浏览器已打开，请完成登录"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"启动登录失败: {e}")
+
+
 @app.get("/config/env")
 def get_env_config():
     """Get current environment configuration."""

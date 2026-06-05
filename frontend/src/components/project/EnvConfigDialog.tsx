@@ -442,32 +442,45 @@ export default function EnvConfigDialog({ isOpen, onClose, isRequired = false }:
                       placeholder="muk-..."
                       className={inputClass}
                     />
-                    {!config.MULEROUTER_API_KEY && config.MULERUN_CLI_LOGGED_IN && (
-                      <p className="text-[11px] text-green-400 mt-1">✓ MuleRun CLI 已登录，无需手动填写</p>
+                    {config.MULERUN_CLI_LOGGED_IN ? (
+                      <p className="text-[11px] text-green-400 mt-1">✓ MuleRun 已登录，无需手动填写</p>
+                    ) : !config.MULEROUTER_API_KEY && (
+                      <p className="text-[11px] text-amber-400 mt-1">未登录 — 请点击下方按钮登录或手动填写 Key</p>
                     )}
                   </div>
+                  {!config.MULERUN_CLI_LOGGED_IN && !config.MULEROUTER_API_KEY && (
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          await api.triggerMuleRunLogin();
+                          const poll = setInterval(async () => {
+                            try {
+                              const updated = await api.getEnvConfig();
+                              if ((updated as any).MULERUN_CLI_LOGGED_IN) {
+                                clearInterval(poll);
+                                setConfig((c: any) => ({ ...c, MULERUN_CLI_LOGGED_IN: true }));
+                              }
+                            } catch {}
+                          }, 3000);
+                          setTimeout(() => clearInterval(poll), 120000);
+                        } catch {}
+                      }}
+                      className="w-full py-2 px-3 rounded-lg border border-primary/40 bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                      一键登录 MuleRun
+                    </button>
+                  )}
                   <details className="group">
-                    <summary className="text-xs text-primary cursor-pointer hover:underline flex items-center gap-1">
+                    <summary className="text-xs text-text-muted cursor-pointer hover:text-text-secondary flex items-center gap-1">
                       <svg className="w-3 h-3 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                      如何获取 MuleRun Key？
+                      手动获取 Key
                     </summary>
-                    <div className="mt-2 space-y-2 pl-4 border-l border-glass-border">
-                      <div className="flex items-center gap-2 text-xs text-text-secondary">
-                        <span className="shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">1</span>
-                        <span>安装 CLI</span>
-                        <code className="ml-auto px-2 py-0.5 bg-glass rounded text-[11px] font-mono select-all">npm i -g @mulerunai/cli</code>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-text-secondary">
-                        <span className="shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">2</span>
-                        <span>浏览器登录</span>
-                        <code className="ml-auto px-2 py-0.5 bg-glass rounded text-[11px] font-mono select-all">mulerun login</code>
-                      </div>
-                      <div className="flex items-center gap-2 text-xs text-text-secondary">
-                        <span className="shrink-0 w-5 h-5 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-bold">3</span>
-                        <span>复制 Key</span>
-                        <code className="ml-auto px-2 py-0.5 bg-glass rounded text-[11px] font-mono select-all">mulerun studio config</code>
-                      </div>
-                      <p className="text-[11px] text-text-secondary/50 mt-1">Key 格式为 muk-...，粘贴到上方输入框即可。本地开发如已登录 CLI，无需填写。</p>
+                    <div className="mt-2 space-y-1.5 pl-4 border-l border-glass-border">
+                      <p className="text-[10px] text-text-muted">1. 安装: <code className="px-1 bg-glass rounded font-mono select-all">npm i -g @mulerunai/cli</code></p>
+                      <p className="text-[10px] text-text-muted">2. 登录: <code className="px-1 bg-glass rounded font-mono select-all">mulerun login</code></p>
+                      <p className="text-[10px] text-text-muted">3. 复制: <code className="px-1 bg-glass rounded font-mono select-all">mulerun studio config</code></p>
                     </div>
                   </details>
                 </div>

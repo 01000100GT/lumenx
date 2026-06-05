@@ -1124,6 +1124,11 @@ export const api = {
         return res.data;
     },
 
+    triggerMuleRunLogin: async () => {
+        const res = await axios.post(`${API_URL}/config/mulerun-login`);
+        return res.data;
+    },
+
     extractLastFrame: async (scriptId: string, frameId: string, videoTaskId: string) => {
         const res = await axios.post(`${API_URL}/projects/${scriptId}/frames/${frameId}/extract_last_frame`, {
             video_task_id: videoTaskId,
