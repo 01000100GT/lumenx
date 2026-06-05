@@ -194,7 +194,7 @@
     "tplDetailedLabel": "Detailed Reference",
     "tplDetailedDesc": "Tri-view + multi-angle face close-ups",
     "tplDesignSheetLabel": "Design Sheet",
-    "tplDesignSheetDesc": "Full character design (coming soon)",
+    "tplDesignSheetDesc": "Full design (GPT-Image-2 only)",
     "tplSwitchConfirm": "Switching template will overwrite current prompt",
     "tplSwitchYes": "Confirm",
     "tplSwitchNo": "Cancel",

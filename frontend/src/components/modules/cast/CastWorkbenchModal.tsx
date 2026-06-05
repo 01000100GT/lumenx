@@ -102,6 +102,7 @@ const CHARACTER_TEMPLATES: Record<CharacterTemplate, {
     compositionEn: string;
     negativeAppend: string;
     comingSoon?: boolean;
+    gptImageOnly?: boolean;
     exampleImage?: string;
 }> = {
     simple: {
@@ -121,9 +122,9 @@ const CHARACTER_TEMPLATES: Record<CharacterTemplate, {
     design_sheet: {
         labelKey: "tplDesignSheetLabel",
         descKey: "tplDesignSheetDesc",
-        compositionEn: "",
-        negativeAppend: "",
-        comingSoon: true,
+        compositionEn: "Composition: comprehensive character design sheet, single unified image, seamless professional layout on neutral gray background. Top-left: large face close-up portrait (shoulders up, detailed facial features, sharp eyes, skin texture, front-facing). Top-right: three-quarter face view and profile view side by side. Center row: three full-body standing poses (front view, side view, back view), head-to-toe visible, consistent proportions, relaxed neutral pose. Bottom row: detail close-ups of key design elements (hands, accessories, clothing texture, emblems, weapons if any). Small expression studies in corner (neutral, happy, angry, surprised). Consistent soft studio lighting across all panels, no harsh shadows, clean professional layout with subtle grid alignment.",
+        negativeAppend: "text, labels, watermark, UI overlay, panel borders, frames, multiple separate images, photorealistic, flat 2d drawing",
+        gptImageOnly: true,
         exampleImage: "/assets/templates/design-sheet.png",
     },
 };
@@ -267,7 +268,9 @@ export default function CastWorkbenchModal({ isOpen, kind, entityId, onClose }: 
 
     const handleTemplateSwitch = (tpl: CharacterTemplate) => {
         if (tpl === selectedTemplate) return;
-        if (CHARACTER_TEMPLATES[tpl].comingSoon) return;
+        const effectiveModel = modelOverride || currentProject?.model_settings?.t2i_model || "";
+        const isGptImage = effectiveModel.startsWith("gpt-image");
+        if (CHARACTER_TEMPLATES[tpl].comingSoon || (CHARACTER_TEMPLATES[tpl].gptImageOnly && !isGptImage)) return;
         if (promptDirty) {
             setPendingTemplate(tpl);
         } else {
@@ -561,7 +564,9 @@ export default function CastWorkbenchModal({ isOpen, kind, entityId, onClose }: 
                                     <div className="flex gap-3">
                                         {(Object.entries(CHARACTER_TEMPLATES) as [CharacterTemplate, typeof CHARACTER_TEMPLATES[CharacterTemplate]][]).map(([key, tpl]) => {
                                             const isActive = selectedTemplate === key;
-                                            const isLocked = tpl.comingSoon;
+                                            const effectiveModel = modelOverride || currentProject?.model_settings?.t2i_model || "";
+                                            const isGptImage = effectiveModel.startsWith("gpt-image");
+                                            const isLocked = tpl.comingSoon || (tpl.gptImageOnly && !isGptImage);
                                             return (
                                                 <button
                                                     key={key}

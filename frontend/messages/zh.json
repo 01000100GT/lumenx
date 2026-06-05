@@ -194,7 +194,7 @@
     "tplDetailedLabel": "详细参考表",
     "tplDetailedDesc": "三视图 + 多角度面部特写",
     "tplDesignSheetLabel": "角色设定图",
-    "tplDesignSheetDesc": "完整设定（即将推出）",
+    "tplDesignSheetDesc": "完整设定（仅 GPT-Image-2）",
     "tplSwitchConfirm": "切换模板将覆盖当前提示词",
     "tplSwitchYes": "确认切换",
     "tplSwitchNo": "取消",
